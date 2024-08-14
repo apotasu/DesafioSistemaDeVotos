@@ -1,10 +1,12 @@
 package desafiovotos.pautas.controller;
 
 
+import desafiovotos.pautas.entity.Pauta;
 import desafiovotos.pautas.service.PautaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +22,8 @@ public class PautaController {
     }
 
     @PostMapping(path = "{pautaId}")
-    public void makeNewPauta(){
-        pautaService.getPautas();
+    public void makeNewPauta(@RequestBody Pauta pauta){
+        pautaService.createNewPauta(pauta);
     }
 
 }
