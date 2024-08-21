@@ -1,47 +1,98 @@
 package desafiovotos.pautas.entity;
 
+import desafiovotos.pessoa.entity.Pessoa;
 import desafiovotos.votos.entity.Voto;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
-import java.sql.Time;
-import java.util.ArrayList;
+import java.util.Timer;
+import java.util.List;
+import java.util.TimerTask;
+
 
 @Entity
-public class Pauta {
+public class Pauta{
     @Id
     @GeneratedValue
     private Long id;
 
     private String descricao;
-    private Time duracao;
+    private static Timer duracao;
     @OneToMany
-    private ArrayList<Voto> votos;
+    private List<Voto> votos;
     private boolean decicaoFinal;
 
-    public Pauta(String descricao, Time duracao) {
+    public Pauta(String descricao, Long tempo) {
         this.descricao = descricao;
-        this.duracao = duracao;
+        comercarTimer(tempo);
     }
 
     public Pauta(String descricao) {
         this.descricao = descricao;
-        this.duracao = Time.valueOf("60");
+        comercarTimer(60000L);
     }
 
     public Pauta() {
 
     }
 
-    public boolean isDecicaoFinal() {
-        return decicaoFinal;
+    public boolean terminarVotacao(){
+        int countSim = 0;
+        int countNao = 0;
+        for (int i = 0; i<votos.size(); i++){
+            if (votos.get(i).getEscolha()){
+                countSim++;
+            } else {
+                countNao++;
+            }
+        }
+        if (countSim>countNao){
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void setDescricao(String descricao){
-        this.descricao=descricao;
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public static Timer getDuracao() {
+        return duracao;
+    }
+
+    public static void setDuracao(Timer duracao) {
+        Pauta.duracao = duracao;
+    }
+
+    public Object getDecicaoFinal() {
+        if (votos.isEmpty()){
+            return null;
+        } else {
+            return decicaoFinal;
+        }
+    }
+
+    public void setDecicaoFinal(boolean decicaoFinal) {
+        this.decicaoFinal = decicaoFinal;
+    }
+
+    public void Votar(Voto voto){
+        votos.add(voto);
+    }
+    private void comercarTimer(Long tempo) {
+        this.duracao = new Timer();
+        this.duracao.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                terminarVotacao();
+            }
+        }, tempo);
     }
 }

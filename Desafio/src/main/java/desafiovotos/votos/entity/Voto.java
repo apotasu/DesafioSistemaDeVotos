@@ -36,7 +36,7 @@ public class Voto {
     }
 
 
-    public boolean isEscolha() {
+    public boolean getEscolha() {
         return escolha;
     }
 

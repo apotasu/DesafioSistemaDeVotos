@@ -2,35 +2,38 @@ package desafiovotos.votos.service;
 
 
 
-import desafiovotos.pessoa.service.PessoaService;
+import desafiovotos.pautas.entity.Pauta;
+import desafiovotos.pautas.repository.PautaRepository;
 import desafiovotos.votos.entity.Voto;
 import desafiovotos.votos.repository.VotoRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VotoService {
 
     @Autowired
     private VotoRepository votoRepository;
+    @Autowired
+    private PautaRepository pautaRepository;
+
 
     public List<Voto> getVotos() {
         List<Voto> votos = votoRepository.findAll();
         return votos;
     }
 
-    public void addNewVoto(Voto voto) {
+    public void addNewVoto(Voto voto, long id) {
+        pautaRepository.findById(id).get().Votar(voto);
         votoRepository.save(voto);
     }
 
     public void deleteVoto(Long votoId, String documento) {
         boolean exists = votoRepository.existsById(votoId);
         if (!exists) {
-            throw new IllegalStateException("Pessoa não existe");
+            throw new IllegalStateException("Voto não existe");
         } else {
             votoRepository.deleteById(votoId);
         }
